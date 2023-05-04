@@ -28,17 +28,23 @@ const UserSchema = new Schema({
     type: Date,
     required: true,
   },
+  telephone:{
+    type: String,
+    required: true,
+    minlength:10,
+    maxlength:10
+  },
+  designation:{
+    type: String,
+    required: true,
+    minlength:10,
+    maxlength:25
+  },
   role: {
     required: true,
     type: String,
     default: "basic",
     enum: ["basic", "admin"],
-  },
-  license: {
-    type: String,
-    required: true,
-    minlength: 6,
-    maxlength: 6,
   },
   accessToken: {
     type: String,

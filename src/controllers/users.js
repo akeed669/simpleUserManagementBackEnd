@@ -28,7 +28,7 @@ exports.signup = async (req, res, next) => {
     const user = await User.findOne({ username: req.body.username });
     if (user) return res.status(400).send("User already registered.");
 
-    const { name, username, password, role, license } = req.body;
+    const { name, username, password, telephone, designation, role } = req.body;
 
     //convert request body date to jaavscript date
     const dob = new Date(req.body.dob);
@@ -39,9 +39,10 @@ exports.signup = async (req, res, next) => {
       name,
       username,
       password: hashedPassword,
+      telephone,
+      designation,
       role: role || "basic",
-      dob,
-      license,
+      dob
     });
 
     //generate jwt token; set it as user's token and save user
@@ -86,7 +87,8 @@ exports.login = async (req, res, next) => {
     await User.findByIdAndUpdate(user._id, { accessToken });
 
     //send token to store in browser local storage
-    res.send(accessToken);
+    res.send("success!")
+    // res.send(accessToken);
   } catch (error) {
     next(error);
   }
@@ -114,28 +116,14 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
-exports.getUser2 = async (req, res, next) => {
-  try {    
-    res.status(200).json({
-      data: "testing",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-//update a user as admin; send response
-
+//update the telephone number of a user 
 exports.updateUser = async (req, res, next) => {
   try {
-    //used for updating blacklisted/repeat User status
-    //destructure req body
-    const { repeater: isRepeater, blacklisted: isBlacklisted, name } = req.body;
-    //convert string values to boolean before storing
-    const repeater = isRepeater === "Yes" ? true : false;
-    const blacklisted = isBlacklisted === "Yes" ? true : false;
 
-    const update = { repeater, blacklisted, name };
+    //destructure req body
+    const {telephone} = req.body;
+    const update = {telephone};
+    
     const userId = req.params.userId;
 
     await User.findByIdAndUpdate(userId, update);
@@ -149,7 +137,7 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
-//delete specific user from collection; send response
+//delete a user from collection and send a response
 exports.deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
@@ -173,7 +161,9 @@ function validateUserReg(req) {
     password: Joi.string().min(5).max(255).required(),
     role: Joi.string().min(5).max(5),
     dob: Joi.date().less(new Date().toLocaleDateString()),
-    license: Joi.string().min(6).max(6).required(),
+    telephone: Joi.string().min(10).max(10).required(),
+    designation: Joi.string().min(10).max(25).required()
+
   });
 
   return schema.validate(req);

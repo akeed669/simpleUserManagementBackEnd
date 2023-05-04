@@ -10,8 +10,6 @@ router.post("/login", userController.login);
 
 router.get("/user/:userId", userController.getUser);
 
-router.get("/usertest", userController.getUser2);
-
 router.get("/users", userController.getUsers);
 
 router.put("/user/:userId", userController.updateUser);
