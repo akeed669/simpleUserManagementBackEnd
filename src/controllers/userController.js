@@ -153,3 +153,29 @@ exports.deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+//use Joi to validate data when registering a new user
+
+function validateUserReg(req) {
+  const schema = Joi.object({
+    name: Joi.string().min(5).max(50).required(),
+    username: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(5).max(255).required(),
+    role: Joi.string().min(5).max(5),
+    dob: Joi.date().less(new Date().toLocaleDateString()),
+    license: Joi.string().min(6).max(6).required(),
+  });
+
+  return schema.validate(req);
+}
+
+//use Joi to validate data when user sends login request
+
+function validateUserLogin(req) {
+  const schema = Joi.object({
+    username: Joi.string().min(5).max(255).required().email().label("Username"),
+    password: Joi.string().min(5).max(255).required(),
+  });
+
+  return schema.validate(req);
+}

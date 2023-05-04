@@ -44,3 +44,27 @@ const UserSchema = new Schema({
     type: String,
   },
 });
+
+//method to generate jwt required when logging in as user
+//signed with username, role, name and id ; expires in 24 hours
+//encrypted with secret from .env file
+
+UserSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign(
+    {
+      _id: this._id,
+      name: this.name,
+      username: this.username,
+      role: this.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1d",
+    }
+  );
+  return token;
+};
+
+const User = mongoose.model("user", UserSchema);
+
+module.exports = User;
