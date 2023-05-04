@@ -4,25 +4,26 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 
-const User = require("./src/models/userModel");
-const userRoutes = require("./src/routes/userRoutes.js");
+const userRoutes = require("./src/routes/users");
 
 //use the express framework
 const app = express();
-
-//set the port for listening
-const PORT = process.env.PORT || 3001;
+app.use(express.json());
 
 //to handle POST requests in express ; extracts the body of the POST request to req.body
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//routes for receiving requests from front end
+app.use('/',userRoutes);
+
 //define mongodb connection via the mongoose client
 mongoose
   .connect("mongodb://localhost:27017/mydb", {})
-  .then(() => {
-    mongoose.set("useFindAndModify", false);
-    console.log("Connected to the User database successfully");
-  })
+  .then(() => console.log("Connected to the User database successfully"))
   .catch((error) => console.error("Could not connect", error));
+
+//set the port for listening
+const port = process.env.PORT || 3001;
+app.listen(port, () => console.log(`Listening on port ${port}...`));

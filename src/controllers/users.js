@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const User = require("../models/userModel");
+const User = require("../models/user");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -108,6 +108,16 @@ exports.getUser = async (req, res, next) => {
     if (!user) return next(new Error("User does not exist"));
     res.status(200).json({
       data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getUser2 = async (req, res, next) => {
+  try {    
+    res.status(200).json({
+      data: "testing",
     });
   } catch (error) {
     next(error);
