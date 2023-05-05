@@ -8,6 +8,7 @@ const userRoutes = require("./src/routes/users");
 
 //use the express framework
 const app = express();
+
 app.use(express.json());
 
 //to handle POST requests in express ; extracts the body of the POST request to req.body

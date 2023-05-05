@@ -87,8 +87,7 @@ exports.login = async (req, res, next) => {
     await User.findByIdAndUpdate(user._id, { accessToken });
 
     //send token to store in browser local storage
-    res.send("success!")
-    // res.send(accessToken);
+    res.send({"token":accessToken, "message":"success!"});
   } catch (error) {
     next(error);
   }
@@ -102,7 +101,7 @@ exports.getUsers = async (req, res, next) => {
   });
 };
 
-//get specific user from mongodb collection; send response as json object
+//get user details from mongodb collection and send response as json object
 exports.getUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
@@ -120,7 +119,7 @@ exports.getUser = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
 
-    //destructure req body
+    //destructure request body
     const {telephone} = req.body;
     const update = {telephone};
     
@@ -143,10 +142,6 @@ exports.deleteUser = async (req, res, next) => {
     const userId = req.params.userId;
     await User.findByIdAndDelete(userId);
     res.status(200).send("This user was removed successfully!");
-    // res.status(200).json({
-    //   data: null,
-    //   message: 'User has been deleted'
-    // });
   } catch (error) {
     next(error);
   }
