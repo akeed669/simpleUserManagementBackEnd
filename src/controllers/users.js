@@ -42,7 +42,7 @@ exports.signup = async (req, res, next) => {
       telephone,
       designation,
       role: role || "basic",
-      dob
+      dob,
     });
 
     //generate jwt token; set it as user's token and save user
@@ -87,7 +87,7 @@ exports.login = async (req, res, next) => {
     await User.findByIdAndUpdate(user._id, { accessToken });
 
     //send token to store in browser local storage
-    res.send({"token":accessToken, "message":"success!"});
+    res.send({ token: accessToken, message: "success!" });
   } catch (error) {
     next(error);
   }
@@ -115,14 +115,13 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
-//update the telephone number of a user 
+//update the telephone number of a user
 exports.updateUser = async (req, res, next) => {
   try {
-
     //destructure request body
-    const {telephone} = req.body;
-    const update = {telephone};
-    
+    const { telephone } = req.body;
+    const update = { telephone };
+
     const userId = req.params.userId;
 
     await User.findByIdAndUpdate(userId, update);
@@ -155,10 +154,9 @@ function validateUserReg(req) {
     username: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
     role: Joi.string().min(5).max(5),
-    dob: Joi.date().less(new Date().toLocaleDateString()),
+    dob: Joi.date().less(new Date().toLocaleDateString()).required(),
     telephone: Joi.string().min(10).max(10).required(),
-    designation: Joi.string().min(10).max(25).required()
-
+    designation: Joi.string().min(10).max(25).required(),
   });
 
   return schema.validate(req);

@@ -3,11 +3,15 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const cors = require("cors");
 
 const userRoutes = require("./src/routes/users");
 
 //use the express framework
 const app = express();
+
+//use cors for cross origin resource sharing
+app.use(cors());
 
 app.use(express.json());
 
@@ -17,7 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //routes for receiving requests from front end
-app.use('/',userRoutes);
+app.use("/", userRoutes);
 
 //define mongodb connection via the mongoose client
 mongoose
