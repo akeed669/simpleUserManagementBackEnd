@@ -1,34 +1,27 @@
+const winston = require("winston");
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken");
-const path = require("path");
 const cors = require("cors");
-
 const users = require("./src/controllers/users");
-
-//use the express framework
+const error = require("./src/middleware/error");
 const app = express();
+
+require("./src/startup/logging")();
+require("./src/startup/db")();
 
 //use cors for cross origin resource sharing
 app.use(cors());
 
+//to parse JSON data into req.body
 app.use(express.json());
 
-//to handle POST requests in express ; extracts the body of the POST request to req.body
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 //routes for receiving requests from front end
 app.use("/", users);
 
-//define mongodb connection via the mongoose client
-mongoose
-  .connect("mongodb://localhost:27017/mydb", {})
-  .then(() => console.log("Connected to the User database successfully"))
-  .catch((error) => console.error("Could not connect", error));
+// error middleware
+app.use(error);
 
 //set the port for listening
 const port = process.env.PORT || 3001;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+app.listen(port, () => winston.info(`Listening on port ${port}...`));
