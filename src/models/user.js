@@ -1,6 +1,8 @@
+const Joi = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 //create user schema for mongodb collection
 const UserSchema = new Schema({
@@ -28,17 +30,17 @@ const UserSchema = new Schema({
     type: Date,
     required: true,
   },
-  telephone:{
+  telephone: {
     type: String,
     required: true,
-    minlength:10,
-    maxlength:10
+    minlength: 10,
+    maxlength: 10,
   },
-  designation:{
+  designation: {
     type: String,
     required: true,
-    minlength:10,
-    maxlength:25
+    minlength: 10,
+    maxlength: 25,
   },
   role: {
     required: true,
@@ -71,6 +73,49 @@ UserSchema.methods.generateAuthToken = function () {
   return token;
 };
 
+//use Joi to validate data when registering a new user
+
+function validateUserReg(req) {
+  const schema = Joi.object({
+    name: Joi.string().min(5).max(50).required(),
+    username: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(5).max(255).required(),
+    role: Joi.string().min(5).max(5),
+    dob: Joi.date().less(new Date().toLocaleDateString()).required(),
+    telephone: Joi.string().min(10).max(10).required(),
+    designation: Joi.string().min(10).max(25).required(),
+  });
+
+  return schema.validate(req);
+}
+
+//use Joi to validate data when user sends login request
+
+function validateUserLogin(req) {
+  const schema = Joi.object({
+    username: Joi.string().min(5).max(255).required().email().label("Username"),
+    password: Joi.string().min(5).max(255).required(),
+  });
+
+  return schema.validate(req);
+}
+
+//use bcrypt to hash new password before storing
+async function hashPassword(password) {
+  return await bcrypt.hash(password, 10);
+}
+
+//use bcrypt to check plain password against hashed password
+async function validatePassword(plainPassword, hashedPassword) {
+  return await bcrypt.compare(plainPassword, hashedPassword);
+}
+
 const User = mongoose.model("user", UserSchema);
 
-module.exports = User;
+module.exports = {
+  User,
+  validateUserReg,
+  validateUserLogin,
+  hashPassword,
+  validatePassword,
+};
