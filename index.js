@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
 
-const userRoutes = require("./src/routes/users");
+const users = require("./src/controllers/users");
 
 //use the express framework
 const app = express();
@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //routes for receiving requests from front end
-app.use("/", userRoutes);
+app.use("/", users);
 
 //define mongodb connection via the mongoose client
 mongoose

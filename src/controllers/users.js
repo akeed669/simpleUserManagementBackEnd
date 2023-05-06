@@ -5,12 +5,16 @@ const {
   hashPassword,
   validatePassword,
 } = require("../models/user");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 const _ = require("lodash");
+const express = require("express");
+const router = express.Router();
 
 require("dotenv").config();
 
 //create a new user
-exports.signup = async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   try {
     //validate inputs
     const { error } = validateUserReg(req.body);
@@ -52,10 +56,10 @@ exports.signup = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
 // allow login if permissible
-exports.login = async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     //validate inputs
     const { error } = validateUserLogin(req.body);
@@ -83,18 +87,18 @@ exports.login = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
 //send all users from mongodb collection as a json response object
-exports.getUsers = async (req, res, next) => {
+router.get("/users", auth, admin, async (req, res, next) => {
   const users = await User.find({});
   res.status(200).json({
     data: users,
   });
-};
+});
 
 //get user details from mongodb collection and send response as json object
-exports.getUser = async (req, res, next) => {
+router.get("/user/:userId", auth, async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
@@ -105,10 +109,10 @@ exports.getUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
 //update the telephone number of a user
-exports.updateUser = async (req, res, next) => {
+router.put("/user/:userId", auth, async (req, res, next) => {
   try {
     //destructure request body
     const { telephone } = req.body;
@@ -125,10 +129,10 @@ exports.updateUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
 //delete a user from collection and send a response
-exports.deleteUser = async (req, res, next) => {
+router.delete("/user/:userId", auth, admin, async (req, res, next) => {
   try {
     const userId = req.params.userId;
     await User.findByIdAndDelete(userId);
@@ -136,4 +140,6 @@ exports.deleteUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
+
+module.exports = router;
