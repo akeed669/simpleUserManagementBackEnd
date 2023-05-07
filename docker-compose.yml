@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  database:
+    image: mongo
+    restart: on-failure
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+  node:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: akeedm/simplenodecrudapp:latest
+    environment:
+      - MONGO_URI=mongodb://db:27017/mydb
+    command: npm start
+    depends_on:
+      - database
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3001:3001"
+
+volumes:
+  mongodb:
