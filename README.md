@@ -1,21 +1,21 @@
-# Rename the test.env file to .env
+### Rename the test.env file to .env
 
-# View logfile.log inside the running container for logs
+### View logfile.log inside the running container for logs
 
-# Access the node server via the container with the below command
+### Access the node server via the container with the below command
 
-    docker exec -it <container_id> bash
+#### docker exec -it <container_id> bash
 
-# Access the mongodb container to view collections and documents with below commands (in order)
+#### Access the mongodb container to view collections and documents with below commands (in order)
 
-    docker exec -it <container_id> bash
+##### docker exec -it <container_id> bash
 
-    mongosh
+##### mongosh
 
-    show dbs
+##### show dbs
 
-    use <db_name>
+##### use <db_name>
 
-    show collections
+##### show collections
 
-    db.<collection_name>.find()
+##### db.<collection_name>.find()
