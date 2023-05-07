@@ -4,7 +4,7 @@ const winston = require("winston");
 //define mongodb connection via the mongoose client
 module.exports = function () {
   mongoose
-    .connect("mongodb://db:27017/mydb", {})
+    .connect("mongodb://mongo:27017/mydb", {})
     .then(() => winston.info("Connected to the User database successfully"));
 
   // .catch((error) => console.error("Could not connect", error));

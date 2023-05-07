@@ -1,28 +1,39 @@
-version: "3.8"
+version: "3"
 services:
-  database:
+  mongo:
     image: mongo
-    restart: on-failure
+    # restart: on-failure
     ports:
       - 27017:27017
+    networks:
+      - my-network
     volumes:
       - mongodb:/data/db
-  node:
-    restart: on-failure
+  api-server:
+    image: akeedm/simplenodecrudapp:latest
+    restart: always
     build:
       context: .
-      dockerfile: Dockerfile
-    image: akeedm/simplenodecrudapp:latest
-    environment:
-      - MONGO_URI=mongodb://db:27017/mydb
-    command: npm start
+      dockerfile: Dockerfile    
+    # environment:
+    #   - MONGO_URI=mongodb://db:27017/mydb
+    # command: npm start
     depends_on:
-      - database
-    volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
+      - mongo
+    networks: 
+      - my-network
+    # volumes:
+    #   - .:/usr/app/
+    #   - /usr/app/node_modules
     ports:
       - "3001:3001"
+    # links:
+    #   - database
+
+networks:
+  my-network:
+    driver: bridge
 
 volumes:
   mongodb:
+    driver: local
